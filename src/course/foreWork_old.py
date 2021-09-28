@@ -158,11 +158,9 @@ def detect_job_type(jobs, usernm, course_id):
     console.log("正在尝试识别[yellow]任务点类型[/yellow]")
     mp4 = {}
     ppt = {}
-    doc = {}
-    pdf = {}
     for chapter in jobs:
         for item in jobs[chapter]:
-            # print(item)
+            print(item)
             url = 'https://mooc1-api.chaoxing.com/ananas/status/' + item[0]
             header = {
                 'Host': 'mooc1-api.chaoxing.com',
@@ -175,34 +173,23 @@ def detect_job_type(jobs, usernm, course_id):
                 'Accept-Language': 'zh-CN,en-US;q=0.8',
             }
             resp = requests.get(url, headers=header)
+            print(resp.json())
+            input()
             result = resp.json()
-            print(result)
             rtn = job_type(chapter, item, result)
             if rtn['type'] == 'mp4':
                 mp4[item[0]] = rtn['detail']
-                # print('mp4')
             elif rtn['type'] == 'ppt':
                 ppt[item[0]] = rtn['detail']
-                # print('ppt')
-            elif rtn['type'] == 'doc':
-                doc[item[0]] = rtn['detail']
-                # print('doc')
-            elif rtn['type'] == 'pdf':
-                pdf[item[0]] = rtn['detail']
-                # print('pdf')
             else:
                 pass
-    console.log('共加载任务点[yellow]{}[/yellow]个'.format(len(mp4) + len(ppt) + len(doc)+ len(pdf)))
+    console.log('共加载任务点[yellow]{}[/yellow]个'.format(len(mp4) + len(ppt)))
     course_path = 'saves/{}/{}'.format(usernm, course_id)
     with open('{}/mp4info.json'.format(course_path), 'w') as f:
         json.dump(mp4, f)
     with open('{}/pptinfo.json'.format(course_path), 'w') as f:
         json.dump(ppt, f)
-    with open('{}/docinfo.json'.format(course_path), 'w') as f:
-        json.dump(doc, f)
-    with open('{}/pdfinfo.json'.format(course_path), 'w') as f:
-        json.dump(pdf, f)
-    return mp4, ppt, doc, pdf
+    return mp4, ppt
 
 
 def job_type(chapter, item, content):
@@ -238,20 +225,6 @@ def job_type(chapter, item, content):
             # ppt[item[0]] = object_ppt
             console.log('添加ppt任务[yellow]{}[/yellow]成功'.format(content['filename']))
             return {'type': 'ppt', 'detail': object_ppt}
-        elif 'doc' in filename:
-            object_doc = []
-            object_doc.append(content['filename'])
-            object_doc.append(content['crc'])
-            object_doc.append(content['key'])
-            console.log('添加doc任务[yellow]{}[/yellow]成功'.format(content['filename']))
-            return {'type': 'doc', 'detail': object_doc}
-        elif 'pdf' in filename:
-            object_pdf = []
-            object_pdf.append(content['filename'])
-            object_pdf.append(content['crc'])
-            object_pdf.append(content['key'])
-            console.log('添加pdf任务[yellow]{}[/yellow]成功'.format(content['filename']))
-            return {'type': 'pdf', 'detail': object_pdf}
         else:
             console.log('[red]未检测出任务类型[/red]')
             return {'type': 'none'}
@@ -297,7 +270,7 @@ def get_forework_done(usernm, session):
     if not isLocal:
         console.log("开始[red]在线[/red]获取课程所有信息")
         jobs = find_objectives(usernm, chapterids, course['courseid'], session)
-        mp4, ppt, doc, pdf = detect_job_type(jobs, usernm, course['courseid'])
+        mp4, ppt = detect_job_type(jobs, usernm, course['courseid'])
         course = get_openc(usernm, course, session)
         return jobs, course, mp4, ppt
     else:
@@ -309,11 +282,4 @@ def get_forework_done(usernm, session):
             mp4 = json.loads(f.read())
         with open('{}/pptinfo.json'.format(course_path), 'r') as f:
             ppt = json.loads(f.read())
-        with open('{}/docinfo.json'.format(course_path), 'r') as f:
-            doc = json.loads(f.read())
-        with open('{}/pdfinfo.json'.format(course_path), 'r') as f:
-            pdf = json.loads(f.read())
-
-
-
-        return jobs, course, mp4, ppt, doc, pdf
+        return jobs, course, mp4, ppt

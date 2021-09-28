@@ -289,3 +289,13 @@ def load_ppt(session, course, ppt_done, chapter_done, chapters, usernm, ppt):
                 f.close()
                 total = 0
                 print('开始读取后续章节')
+
+
+def do_doc(session,course,usernm,doc):
+    for i in doc:
+        print(doc[i])
+    # url = 'https://mooc1-1.chaoxing.com/knowledge/cards?clazzid=' + str(
+    #     course['clazzid']) + '&courseid=' + str(course['courseid']) + '&knowledgeid=' + str(
+    #     item) + '&num=' + str(i) + '&ut=s&cpi=' + str(course['cpi']) + '&v=20160407-1'
+    # resq = session.get(url, headers=header).text
+    # result = re.findall('mArg = (.*?);', resq)[1]

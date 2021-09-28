@@ -9,8 +9,12 @@ if __name__ == '__main__':
     # 从本地或在线获取用户信息
     usernm, session = getUser.get_session()
     # 从本地或在线获取课程信息以及各类任务点信息
-    jobs, course, mp4, ppt = foreWork.get_forework_done(usernm, session)
+    jobs, course, mp4, ppt, doc,pdf = foreWork.get_forework_done(usernm, session)
     # 开始完成MP4任务点
-    doWork.do_mp4(usernm, course, session, mp4)
-    # 开始完成PPT任务点
-    doWork.do_ppt(session, mp4, ppt, usernm, course)
+    # doWork.do_mp4(usernm, course, session, mp4)
+
+    # 开始完成doc任务
+    # doWork.do_doc(session,course,usernm,doc)
+    # # 开始完成PPT任务点
+    # doWork.do_ppt(session, mp4, ppt, usernm, course)
+    # input('完成任务点，按回车键退出')
